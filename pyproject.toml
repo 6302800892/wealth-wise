@@ -33,7 +33,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--strict-markers -p no:cacheprovider"
+addopts = "--strict-markers -p no:cacheprovider -m 'not e2e'"
 filterwarnings = ["ignore:Using `httpx` with `starlette.testclient` is deprecated"]
 markers = [
     "ac(id): links a test to an acceptance criterion in specs/app_spec.md (e.g. AC-05)",

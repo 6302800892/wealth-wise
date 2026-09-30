@@ -69,3 +69,13 @@
 - **Checks:** 9 API, 0 Playwright, 0 design passed
 - **Coverage:** 94% (baseline: 93%)
 - **Learned Rules Applied:** [KD-01, KD-05]
+
+## Group F — Sprint 5 Frontend + UI validation
+- **Date:** 2026-09-30
+- **Status:** PASS
+- **Stories:** [E8-S1, E8-S2, E8-S3, E8-S4]
+- **Mode:** solo
+- **Summary:** React UI for all three roles, responsive shell, Playwright journeys with per-viewport ARIA baselines.
+- **Checks:** 2 API, 6 Playwright, 4 design passed
+- **Coverage:** 94% (baseline: 94%)
+- **Learned Rules Applied:** [KD-06]
