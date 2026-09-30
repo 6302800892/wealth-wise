@@ -101,13 +101,20 @@ def list_templates(ctx: ServiceContext) -> dict[str, Any]:
             "items": [_meta_view(m) for m in policy_repo.list_template_versions(ctx.conn)]}
 
 
+def _with_active_classes(ctx: ServiceContext, rows: TemplateRows) -> TemplateRows:
+    """FL-001: every active asset class appears in a new draft (0.00 if the active version lacks it)."""
+    active_codes = [a.code for a in asset_class_repo.list_asset_classes(ctx.conn, active_only=True)]
+    zero = Decimal("0.00")
+    return {key: {**row, **{code: zero for code in active_codes if code not in row}} for key, row in rows.items()}
+
+
 def create_template_draft(ctx: ServiceContext, actor: str) -> dict[str, Any]:
     _no_draft(policy_repo.list_template_versions(ctx.conn))
     active = policy_repo.get_template_set(ctx.conn, policy_repo.active_template_version(ctx.conn))
     version = policy_repo.next_template_version(ctx.conn)
     with transaction(ctx.conn):
         policy_repo.insert_template_draft(ctx.conn, version=version, actor=actor, now=ctx.now_iso())
-        policy_repo.replace_template_rows(ctx.conn, version=version, rows=active.rows)
+        policy_repo.replace_template_rows(ctx.conn, version=version, rows=_with_active_classes(ctx, active.rows))
     return template_view(ctx, version)
 
 

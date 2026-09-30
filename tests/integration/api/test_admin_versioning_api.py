@@ -129,3 +129,15 @@ def test_asset_class_master(client, auth):
     assert (in_use.status_code, in_use.json()["error"]["code"]) == (409, "ASSET_CLASS_IN_USE")
     codes = [a["code"] for a in client.get("/api/v1/admin/asset-classes", headers=admin).json()["items"]]
     assert codes[:4] == ["EQUITY", "DEBT", "GOLD", "CASH"]
+
+
+@pytest.mark.ac("AC-02")
+def test_new_asset_class_appears_in_next_draft_so_it_can_be_published(client, auth):
+    """AC-02 / FL-001: a newly added asset class is included (at 0.00) in the next draft, so the draft is publishable."""
+    admin = auth("admin.one")
+    client.post("/api/v1/admin/asset-classes", json={"code": "REIT", "name": "Real estate", "display_order": 5},
+                headers=admin)
+    draft = _draft_template(client, admin)
+    assert all(row["allocations"].get("REIT") == "0.00" for row in draft["rows"])
+    published = client.post(f"{TEMPLATES}/2/publish", headers=admin)
+    assert published.status_code == 200, published.text
