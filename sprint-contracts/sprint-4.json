@@ -1,0 +1,40 @@
+{
+  "group": "E",
+  "sprint": "4 — Advisor workbench + admin policy versioning",
+  "stories": ["E6-S1", "E6-S2", "E6-S3", "E7-S1", "E7-S2", "E7-S3"],
+  "acceptance_criteria": ["AC-09", "AC-10", "AC-02.2", "AC-02.3"],
+  "contract": {
+    "api_checks": [
+      {"id": "api-401", "method": "GET", "path": "/api/v1/advisor/customers", "auth": "advisor.one",
+       "expected_status": 200, "expected_body": {"total": 3}, "description": "Advisor lists customers"},
+      {"id": "api-402", "method": "GET", "path": "/api/v1/advisor/customers", "auth": "customer.alpha",
+       "expected_status": 403, "description": "NFR-04 customers cannot use the advisor workbench"},
+      {"id": "api-403", "method": "GET", "path": "/api/v1/admin/allocation-templates", "auth": "admin.one",
+       "expected_status": 200, "expected_body": {"active_version": 1}, "description": "AC-10 v1 active"},
+      {"id": "api-404", "method": "POST", "path": "/api/v1/admin/allocation-templates", "auth": "admin.one",
+       "expected_status": 201, "expected_body": {"version": 2, "status": "DRAFT"},
+       "description": "AC-10 draft v2 cloned from active"},
+      {"id": "api-405", "method": "POST", "path": "/api/v1/admin/allocation-templates", "auth": "admin.one",
+       "expected_status": 409, "expected_body": {"error": {"code": "DRAFT_ALREADY_EXISTS"}},
+       "description": "BR-21 only one draft at a time"},
+      {"id": "api-406", "method": "PUT", "path": "/api/v1/admin/allocation-templates/1", "auth": "admin.one",
+       "body": {"rows": []}, "expected_status": 409, "expected_body": {"error": {"code": "VERSION_IMMUTABLE"}},
+       "description": "AC-10.2 published v1 is immutable"},
+      {"id": "api-407", "method": "POST", "path": "/api/v1/admin/allocation-templates/2/publish", "auth": "admin.one",
+       "expected_status": 200, "expected_body": {"version": 2, "status": "PUBLISHED"},
+       "description": "AC-10.1 publish v2"},
+      {"id": "api-408", "method": "GET", "path": "/api/v1/me/holdings", "auth": "customer.alpha",
+       "expected_status": 200, "expected_body": {"template_version": 1},
+       "description": "AC-10.3 in-flight customer stays on v1"},
+      {"id": "api-409", "method": "PATCH", "path": "/api/v1/admin/asset-classes/EQUITY", "auth": "admin.one",
+       "body": {"is_active": false}, "expected_status": 409, "expected_body": {"error": {"code": "ASSET_CLASS_IN_USE"}},
+       "description": "Asset class in the active template cannot be deactivated"}
+    ],
+    "playwright_checks": [],
+    "architecture_checks": {
+      "override_audit": {"required": true, "description": "tests/architecture/test_override_requires_audit.py"},
+      "traceability": {"required": true, "description": "tests/architecture/test_ac_traceability.py — AC-01..AC-10 all tagged"},
+      "pii": {"required": true, "description": "tests/integration/test_pii_not_logged.py"}
+    }
+  }
+}
