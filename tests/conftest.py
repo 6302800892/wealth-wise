@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 from src.config.clock import FixedClock
 from src.config.settings import Settings
 from src.main import create_app
+from src.repository.db import connect
 
 TEST_DATE = date(2026, 9, 30)
 TEST_PASSWORD = "Test-Only-Password-1"
@@ -51,3 +52,11 @@ def login(client: TestClient, username: str, password: str = TEST_PASSWORD) -> d
 def auth(client: TestClient) -> Callable[[str], dict[str, str]]:
     """Return a function that logs a seeded user in and returns auth headers."""
     return lambda username: login(client, username)
+
+
+@pytest.fixture
+def db(app, settings):
+    """A direct connection to the test database for asserting persisted state."""
+    connection = connect(settings.db_path)
+    yield connection
+    connection.close()

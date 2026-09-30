@@ -118,7 +118,7 @@ def _evaluate(args) -> int:
     out = ROOT / "specs" / "reviews" / f"{contract_path.stem}-api-evaluation.md"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(_report(contract_path, results), encoding="utf-8")
-    print(out.read_text(encoding="utf-8"))
+    sys.stdout.buffer.write(out.read_bytes())
     return 0 if all(r["passed"] for r in results) else 1
 
 

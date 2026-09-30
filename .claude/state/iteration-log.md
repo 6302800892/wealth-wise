@@ -29,3 +29,13 @@
 - **Checks:** 5 API, 0 Playwright, 0 design passed
 - **Coverage:** 82% (baseline: 0%)
 - **Learned Rules Applied:** []
+
+## Group B — Sprint 1 Risk profile + recommendation
+- **Date:** 2026-09-30
+- **Status:** PASS
+- **Stories:** [E1-S1, E1-S2, E1-S3, E2-S1, E2-S2, E2-S3]
+- **Mode:** solo
+- **Summary:** Questionnaire scoring, goals, horizon buckets, versioned templates and idempotent recommendations; DB-level immutability for published versions.
+- **Checks:** 11 API, 0 Playwright, 0 design passed
+- **Coverage:** 90% (baseline: 82%)
+- **Learned Rules Applied:** [KD-01, KD-02]
