@@ -1,0 +1,40 @@
+{
+  "group": "C",
+  "sprint": "2 — Holdings + drift",
+  "stories": ["E3-S1", "E3-S2", "E3-S3"],
+  "acceptance_criteria": ["AC-05"],
+  "requirements": ["NFR-01"],
+  "contract": {
+    "api_checks": [
+      {"id": "api-201", "method": "GET", "path": "/api/v1/me/holdings", "auth": "customer.alpha",
+       "expected_status": 200, "expected_body": {"total_value": "1000000.00", "max_drift_pct": "10.00",
+                                                 "threshold_pct": "5.00", "drift_status": "OK"},
+       "description": "AC-05.1/05.2 portfolio E1 valued at 1,000,000.00 with max drift 10.00"},
+      {"id": "api-202", "method": "GET", "path": "/api/v1/me/holdings", "auth": "customer.beta",
+       "expected_status": 200, "expected_body": {"total_value": "0.00", "max_drift_pct": null},
+       "description": "AC-05.4 no holdings → total 0.00, no drift"},
+      {"id": "api-203", "method": "POST", "path": "/api/v1/me/holdings", "auth": "customer.beta",
+       "body": {"asset_class_code": "EQUITY", "units": 10.5}, "expected_status": 422,
+       "description": "NFR-01 float units rejected"},
+      {"id": "api-204", "method": "POST", "path": "/api/v1/me/holdings", "auth": "customer.beta",
+       "body": {"asset_class_code": "GOLD", "units": "3.0000"}, "expected_status": 200,
+       "expected_body": {"total_value": "150.00"}, "description": "AC-05 recorded holding is valued"},
+      {"id": "api-205", "method": "GET", "path": "/api/v1/admin/nav/latest", "auth": "admin.one",
+       "expected_status": 200, "expected_body": {"nav_date": "2026-09-30", "navs": {"CASH": "1.0000"}},
+       "description": "BR-25 day-0 NAV seeded; CASH fixed at 1.0000"},
+      {"id": "api-206", "method": "POST", "path": "/api/v1/admin/nav/refresh", "auth": "admin.one",
+       "expected_status": 200, "expected_body": {"nav_date": "2026-10-01"},
+       "description": "BR-25 refresh ingests the next feed day"},
+      {"id": "api-207", "method": "GET", "path": "/api/v1/me/holdings", "auth": "customer.alpha",
+       "expected_status": 200, "expected_body": {"nav_date": "2026-10-01"},
+       "description": "AC-05 valuation follows the latest NAV"},
+      {"id": "api-208", "method": "POST", "path": "/api/v1/admin/nav/refresh", "auth": "customer.alpha",
+       "expected_status": 403, "description": "NFR-04 customers cannot trigger NAV refresh"}
+    ],
+    "playwright_checks": [],
+    "architecture_checks": {
+      "no_float": {"required": true, "description": "AST scan finds no float in money layers"},
+      "append_only": {"required": true, "description": "nav_prices rejects UPDATE/DELETE"}
+    }
+  }
+}

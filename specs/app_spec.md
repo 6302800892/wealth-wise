@@ -760,3 +760,4 @@ The capstone brief left these points open. The decisions below are made here and
 | Version | Date | Change |
 |---|---|---|
 | 1.0.0 | 2026-09-30 | Initial root spec, from BC-AINE-008 |
+
