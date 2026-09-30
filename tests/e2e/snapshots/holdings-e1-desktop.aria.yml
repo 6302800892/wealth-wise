@@ -1,0 +1,43 @@
+- table:
+  - rowgroup:
+    - row "Asset class Units NAV Value Current Target Drift":
+      - columnheader "Asset class"
+      - columnheader "Units"
+      - columnheader "NAV"
+      - columnheader "Value"
+      - columnheader "Current"
+      - columnheader "Target"
+      - columnheader "Drift"
+  - rowgroup:
+    - row "Equity 4000.0000 ₹150.0000 ₹6,00,000.00 60.00% 50.00% 10.00%":
+      - cell "Equity"
+      - cell "4000.0000"
+      - cell "₹150.0000"
+      - cell "₹6,00,000.00"
+      - cell "60.00%"
+      - cell "50.00%"
+      - cell "10.00%"
+    - row "Debt 10000.0000 ₹25.0000 ₹2,50,000.00 25.00% 35.00% 10.00%":
+      - cell "Debt"
+      - cell "10000.0000"
+      - cell "₹25.0000"
+      - cell "₹2,50,000.00"
+      - cell "25.00%"
+      - cell "35.00%"
+      - cell "10.00%"
+    - row "Gold 2000.0000 ₹50.0000 ₹1,00,000.00 10.00% 10.00% 0.00%":
+      - cell "Gold"
+      - cell "2000.0000"
+      - cell "₹50.0000"
+      - cell "₹1,00,000.00"
+      - cell "10.00%"
+      - cell "10.00%"
+      - cell "0.00%"
+    - row "Cash 50000.0000 ₹1.0000 ₹50,000.00 5.00% 5.00% 0.00%":
+      - cell "Cash"
+      - cell "50000.0000"
+      - cell "₹1.0000"
+      - cell "₹50,000.00"
+      - cell "5.00%"
+      - cell "5.00%"
+      - cell "0.00%"

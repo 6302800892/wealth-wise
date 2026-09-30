@@ -1,0 +1,18 @@
+- table:
+  - rowgroup:
+    - row "Asset class Target allocation":
+      - columnheader "Asset class"
+      - columnheader "Target allocation"
+  - rowgroup:
+    - row "Equity 60.00%":
+      - cell "Equity"
+      - cell "60.00%"
+    - row "Debt 27.00%":
+      - cell "Debt"
+      - cell "27.00%"
+    - row "Gold 10.00%":
+      - cell "Gold"
+      - cell "10.00%"
+    - row "Cash 3.00%":
+      - cell "Cash"
+      - cell "3.00%"

@@ -1,0 +1,43 @@
+- table:
+  - rowgroup:
+    - row "Asset class Current Target Drift Action Units Trade value":
+      - columnheader "Asset class"
+      - columnheader "Current"
+      - columnheader "Target"
+      - columnheader "Drift"
+      - columnheader "Action"
+      - columnheader "Units"
+      - columnheader "Trade value"
+  - rowgroup:
+    - row "EQUITY 60.00% 50.00% 10.00% SELL 666.6666 ₹99,999.99":
+      - cell "EQUITY"
+      - cell "60.00%"
+      - cell "50.00%"
+      - cell "10.00%"
+      - cell "SELL"
+      - cell "666.6666"
+      - cell "₹99,999.99"
+    - row "DEBT 25.00% 35.00% 10.00% BUY 4000.0000 ₹1,00,000.00":
+      - cell "DEBT"
+      - cell "25.00%"
+      - cell "35.00%"
+      - cell "10.00%"
+      - cell "BUY"
+      - cell "4000.0000"
+      - cell "₹1,00,000.00"
+    - row "GOLD 10.00% 10.00% 0.00% HOLD 0.0000 ₹0.00":
+      - cell "GOLD"
+      - cell "10.00%"
+      - cell "10.00%"
+      - cell "0.00%"
+      - cell "HOLD"
+      - cell "0.0000"
+      - cell "₹0.00"
+    - row "CASH 5.00% 5.00% 0.00% HOLD 0.0000 ₹0.00":
+      - cell "CASH"
+      - cell "5.00%"
+      - cell "5.00%"
+      - cell "0.00%"
+      - cell "HOLD"
+      - cell "0.0000"
+      - cell "₹0.00"

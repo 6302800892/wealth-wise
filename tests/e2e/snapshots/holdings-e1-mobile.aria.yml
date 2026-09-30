@@ -1,0 +1,34 @@
+- table:
+  - rowgroup:
+    - row "Asset class Equity Units 4000.0000 NAV ₹150.0000 Value ₹6,00,000.00 Current 60.00% Target 50.00% Drift 10.00%":
+      - cell "Asset class Equity"
+      - cell "Units 4000.0000"
+      - cell "NAV ₹150.0000"
+      - cell "Value ₹6,00,000.00"
+      - cell "Current 60.00%"
+      - cell "Target 50.00%"
+      - cell "Drift 10.00%"
+    - row "Asset class Debt Units 10000.0000 NAV ₹25.0000 Value ₹2,50,000.00 Current 25.00% Target 35.00% Drift 10.00%":
+      - cell "Asset class Debt"
+      - cell "Units 10000.0000"
+      - cell "NAV ₹25.0000"
+      - cell "Value ₹2,50,000.00"
+      - cell "Current 25.00%"
+      - cell "Target 35.00%"
+      - cell "Drift 10.00%"
+    - row "Asset class Gold Units 2000.0000 NAV ₹50.0000 Value ₹1,00,000.00 Current 10.00% Target 10.00% Drift 0.00%":
+      - cell "Asset class Gold"
+      - cell "Units 2000.0000"
+      - cell "NAV ₹50.0000"
+      - cell "Value ₹1,00,000.00"
+      - cell "Current 10.00%"
+      - cell "Target 10.00%"
+      - cell "Drift 0.00%"
+    - row "Asset class Cash Units 50000.0000 NAV ₹1.0000 Value ₹50,000.00 Current 5.00% Target 5.00% Drift 0.00%":
+      - cell "Asset class Cash"
+      - cell "Units 50000.0000"
+      - cell "NAV ₹1.0000"
+      - cell "Value ₹50,000.00"
+      - cell "Current 5.00%"
+      - cell "Target 5.00%"
+      - cell "Drift 0.00%"
