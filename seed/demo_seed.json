@@ -1,15 +1,90 @@
 {
   "_comment": "Synthetic demo data only (Synthetic-Data Rule). All names, emails and dates of birth are fictional.",
   "customers": [
-    {"key": "alpha", "full_name": "Aarav Alpha", "email": "alpha@example.test", "date_of_birth": "1988-04-12", "kyc_verified": true},
-    {"key": "beta", "full_name": "Bhavna Beta", "email": "beta@example.test", "date_of_birth": "1995-11-03", "kyc_verified": true},
-    {"key": "gamma", "full_name": "Gautam Gamma", "email": "gamma@example.test", "date_of_birth": "1979-07-21", "kyc_verified": false}
+    {
+      "key": "alpha",
+      "full_name": "Aarav Alpha",
+      "email": "alpha@example.test",
+      "date_of_birth": "1988-04-12",
+      "kyc_verified": true
+    },
+    {
+      "key": "beta",
+      "full_name": "Bhavna Beta",
+      "email": "beta@example.test",
+      "date_of_birth": "1995-11-03",
+      "kyc_verified": true
+    },
+    {
+      "key": "gamma",
+      "full_name": "Gautam Gamma",
+      "email": "gamma@example.test",
+      "date_of_birth": "1979-07-21",
+      "kyc_verified": false
+    }
   ],
   "users": [
-    {"username": "customer.alpha", "role": "CUSTOMER", "customer": "alpha", "display_name": "Aarav Alpha"},
-    {"username": "customer.beta", "role": "CUSTOMER", "customer": "beta", "display_name": "Bhavna Beta"},
-    {"username": "customer.gamma", "role": "CUSTOMER", "customer": "gamma", "display_name": "Gautam Gamma"},
-    {"username": "advisor.one", "role": "ADVISOR", "customer": null, "display_name": "Advisor One"},
-    {"username": "admin.one", "role": "ADMIN", "customer": null, "display_name": "Admin One"}
+    {
+      "username": "customer.alpha",
+      "role": "CUSTOMER",
+      "customer": "alpha",
+      "display_name": "Aarav Alpha"
+    },
+    {
+      "username": "customer.beta",
+      "role": "CUSTOMER",
+      "customer": "beta",
+      "display_name": "Bhavna Beta"
+    },
+    {
+      "username": "customer.gamma",
+      "role": "CUSTOMER",
+      "customer": "gamma",
+      "display_name": "Gautam Gamma"
+    },
+    {
+      "username": "advisor.one",
+      "role": "ADVISOR",
+      "customer": null,
+      "display_name": "Advisor One"
+    },
+    {
+      "username": "admin.one",
+      "role": "ADMIN",
+      "customer": null,
+      "display_name": "Admin One"
+    }
+  ],
+  "journeys": [
+    {
+      "username": "customer.alpha",
+      "questionnaire_options": {
+        "Q1": "Q1_C",
+        "Q2": "Q2_C",
+        "Q3": "Q3_C",
+        "Q4": "Q4_C",
+        "Q5": "Q5_B",
+        "Q6": "Q6_B"
+      },
+      "goals": [
+        {
+          "key": "alpha_home",
+          "name": "Home down-payment",
+          "goal_type": "HOME",
+          "target_amount": "2000000.00",
+          "target_date": "2031-06-30",
+          "priority": "HIGH"
+        },
+        {
+          "key": "alpha_retirement",
+          "name": "Retirement",
+          "goal_type": "RETIREMENT",
+          "target_amount": "30000000.00",
+          "target_date": "2050-03-31",
+          "priority": "LOW"
+        }
+      ],
+      "recommend": true
+    }
   ]
 }

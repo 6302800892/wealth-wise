@@ -1,0 +1,57 @@
+{
+  "group": "B",
+  "sprint": "1 — Risk profile + recommendation",
+  "stories": ["E1-S1", "E1-S2", "E1-S3", "E2-S1", "E2-S2", "E2-S3"],
+  "acceptance_criteria": ["AC-01", "AC-02", "AC-03", "AC-04", "AC-10.4"],
+  "contract": {
+    "api_checks": [
+      {"id": "api-101", "method": "GET", "path": "/api/v1/questionnaire", "auth": "customer.beta",
+       "expected_status": 200, "expected_body": {"rule_set_version": 1},
+       "description": "AC-01.1 questionnaire exposes active rule set v1"},
+      {"id": "api-102", "method": "POST", "path": "/api/v1/me/risk-assessments", "auth": "customer.beta",
+       "body": {"rule_set_version": 1, "answers": [
+         {"question_id": "Q1", "option_id": "Q1_C"}, {"question_id": "Q2", "option_id": "Q2_C"},
+         {"question_id": "Q3", "option_id": "Q3_C"}, {"question_id": "Q4", "option_id": "Q4_C"},
+         {"question_id": "Q5", "option_id": "Q5_B"}, {"question_id": "Q6", "option_id": "Q6_B"}]},
+       "expected_status": 201, "expected_body": {"total_score": 16, "risk_band": "MODERATE"},
+       "description": "AC-01.2 score 16 → MODERATE"},
+      {"id": "api-103", "method": "POST", "path": "/api/v1/me/risk-assessments", "auth": "customer.beta",
+       "body": {"rule_set_version": 1, "answers": [{"question_id": "Q1", "option_id": "Q1_C"}]},
+       "expected_status": 422, "expected_body": {"error": {"code": "INVALID_ANSWERS"}},
+       "description": "AC-01.4 incomplete answers rejected"},
+      {"id": "api-104", "method": "GET", "path": "/api/v1/me/risk-profile", "auth": "customer.beta",
+       "expected_status": 200, "expected_body": {"risk_band": "MODERATE", "source": "QUESTIONNAIRE"},
+       "description": "AC-01.6 customer sees assigned band"},
+      {"id": "api-105", "method": "POST", "path": "/api/v1/me/recommendations", "auth": "customer.beta",
+       "body": {}, "expected_status": 409, "expected_body": {"error": {"code": "GOAL_REQUIRED"}},
+       "description": "AC-04.5 recommendation requires a goal"},
+      {"id": "api-106", "method": "POST", "path": "/api/v1/me/goals", "auth": "customer.beta",
+       "body": {"name": "Retirement", "goal_type": "RETIREMENT", "target_amount": "5000000.00",
+                "target_date": "2036-09-30", "priority": "HIGH"},
+       "expected_status": 201, "expected_body": {"target_amount": "5000000.00"},
+       "description": "AC-03.1 goal created with string amount"},
+      {"id": "api-107", "method": "POST", "path": "/api/v1/me/goals", "auth": "customer.beta",
+       "body": {"name": "Car", "goal_type": "OTHER", "target_amount": 500000.5,
+                "target_date": "2028-09-30", "priority": "LOW"},
+       "expected_status": 422, "description": "AC-03.3 / NFR-01 JSON number amount rejected"},
+      {"id": "api-108", "method": "POST", "path": "/api/v1/me/recommendations", "auth": "customer.beta",
+       "body": {}, "expected_status": 201,
+       "expected_body": {"risk_band": "MODERATE", "horizon_bucket": "LONG", "total_pct": "100.00", "template_version": 1},
+       "description": "AC-04.1 / AC-02.4 MODERATE + LONG, sums to 100.00"},
+      {"id": "api-109", "method": "POST", "path": "/api/v1/me/recommendations", "auth": "customer.beta",
+       "body": {}, "expected_status": 200, "description": "AC-04.4 identical inputs return existing recommendation"},
+      {"id": "api-110", "method": "POST", "path": "/api/v1/me/recommendations", "auth": "customer.gamma",
+       "body": {}, "expected_status": 403, "expected_body": {"error": {"code": "KYC_NOT_VERIFIED"}},
+       "description": "AC-04.5 KYC stub blocks recommendation"},
+      {"id": "api-111", "method": "GET", "path": "/api/v1/me/recommendations/latest", "auth": "customer.alpha",
+       "expected_status": 200, "expected_body": {"risk_band": "MODERATE", "horizon_bucket": "MEDIUM"},
+       "description": "Seeded customer alpha has MODERATE/MEDIUM recommendation"}
+    ],
+    "playwright_checks": [],
+    "architecture_checks": {
+      "layering": {"required": true, "description": "import-linter contracts kept"},
+      "allocation_sum": {"required": true, "description": "tests/architecture/test_allocation_sum_invariant.py"},
+      "immutability": {"required": true, "description": "tests/architecture/test_published_immutable.py"}
+    }
+  }
+}

@@ -18,15 +18,28 @@ def connect(db_path: str) -> sqlite3.Connection:
     return conn
 
 
+_depth: dict[int, int] = {}
+
+
 @contextmanager
 def transaction(conn: sqlite3.Connection) -> Iterator[sqlite3.Connection]:
-    """Commit on success, roll back on any exception. Use once per use case."""
+    """Commit on success, roll back on any exception. Nested use joins the outermost transaction."""
+    key = id(conn)
+    depth = _depth.get(key, 0)
+    _depth[key] = depth + 1
     try:
         yield conn
-        conn.commit()
+        if depth == 0:
+            conn.commit()
     except BaseException:
-        conn.rollback()
+        if depth == 0:
+            conn.rollback()
         raise
+    finally:
+        if depth == 0:
+            _depth.pop(key, None)
+        else:
+            _depth[key] = depth
 
 
 def ping(conn: sqlite3.Connection) -> bool:
