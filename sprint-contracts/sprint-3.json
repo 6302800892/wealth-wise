@@ -1,0 +1,37 @@
+{
+  "group": "D",
+  "sprint": "3 — Rebalancing + goal tracker",
+  "stories": ["E4-S1", "E4-S2", "E4-S3", "E5-S1", "E5-S2"],
+  "acceptance_criteria": ["AC-06", "AC-07", "AC-08"],
+  "contract": {
+    "api_checks": [
+      {"id": "api-301", "method": "GET", "path": "/api/v1/me/rebalancing", "auth": "customer.alpha",
+       "expected_status": 200, "expected_body": {"total": 1},
+       "description": "AC-06.1 seeded E1 drift produced one proposal"},
+      {"id": "api-302", "method": "POST", "path": "/api/v1/me/rebalancing/evaluate", "auth": "customer.alpha",
+       "expected_status": 200, "expected_body": {"triggered": true, "superseded": 1, "max_drift_pct": "10.00",
+                                                 "rebalancing": {"status": "OPEN"}},
+       "description": "AC-06.1 / AC-06.4 re-evaluation supersedes and creates a new OPEN proposal"},
+      {"id": "api-303", "method": "POST", "path": "/api/v1/me/rebalancing/evaluate", "auth": "customer.gamma",
+       "expected_status": 403, "expected_body": {"error": {"code": "KYC_NOT_VERIFIED"}},
+       "description": "BR-24 KYC stub blocks rebalancing"},
+      {"id": "api-304", "method": "POST", "path": "/api/v1/me/rebalancing/evaluate", "auth": "customer.beta",
+       "expected_status": 409, "expected_body": {"error": {"code": "RECOMMENDATION_REQUIRED"}},
+       "description": "AC-06 evaluation requires a recommendation"},
+      {"id": "api-305", "method": "POST", "path": "/api/v1/admin/nav/refresh", "auth": "admin.one",
+       "expected_status": 200, "expected_body": {"nav_date": "2026-10-01", "goal_snapshots": 2,
+                                                 "rebalancing_evaluated": 1},
+       "description": "AC-06.5 / AC-08.2 refresh snapshots goals and evaluates eligible customers"},
+      {"id": "api-306", "method": "POST", "path": "/api/v1/admin/nav/refresh", "auth": "admin.one",
+       "expected_status": 200, "expected_body": {"nav_date": "2026-10-02", "goal_snapshots": 2},
+       "description": "AC-08.3 next refresh writes the next day's snapshots"},
+      {"id": "api-307", "method": "POST", "path": "/api/v1/me/rebalancing/00000000-0000-0000-0000-000000000000/accept",
+       "auth": "customer.alpha", "expected_status": 404, "description": "AC-07.5 unknown proposal → 404"}
+    ],
+    "playwright_checks": [],
+    "architecture_checks": {
+      "append_only": {"required": true, "description": "goal_progress_snapshots, rebalancing_* and stub_orders reject UPDATE/DELETE"},
+      "single_decision": {"required": true, "description": "UNIQUE(rebalancing_id) on rebalancing_decisions"}
+    }
+  }
+}

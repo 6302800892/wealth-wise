@@ -5,6 +5,7 @@ import logging
 
 from src.config.clock import Clock
 from src.config.settings import Settings
+from src.service import nav_service
 
 log = logging.getLogger(__name__)
 
@@ -17,8 +18,6 @@ def nav_refresh_loop(settings: Settings, clock: Clock) -> asyncio.Task | None:
 
 
 async def _loop(settings: Settings, clock: Clock) -> None:
-    from src.service import nav_service  # local import keeps startup light
-
     while True:
         await asyncio.sleep(settings.nav_refresh_interval_seconds)
         try:

@@ -13,6 +13,11 @@ APPEND_ONLY_TABLES = [
     "portfolio_recommendations",
     "portfolio_recommendation_lines",
     "nav_prices",
+    "goal_progress_snapshots",
+    "rebalancing_recommendations",
+    "rebalancing_lines",
+    "rebalancing_decisions",
+    "stub_orders",
 ]
 
 

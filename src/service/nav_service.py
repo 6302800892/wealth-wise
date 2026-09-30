@@ -11,6 +11,7 @@ from src.config.clock import Clock
 from src.config.settings import Settings
 from src.repository import asset_class_repo, nav_repo
 from src.repository.db import transaction
+from src.service import goal_progress_service, rebalancing_service
 from src.service.context import ServiceContext, open_context
 from src.types.errors import WealthWiseError
 from src.types.fixed_point import NAV_PLACES, parse_fixed, to_wire
@@ -67,11 +68,15 @@ def latest_navs(ctx: ServiceContext) -> dict[str, Any]:
 
 
 def run_refresh_cycle(ctx: ServiceContext) -> dict[str, Any]:
-    """One daily refresh (BR-25). Sprint 2 scope: ingest the next NAV day."""
+    """One daily refresh, atomically: ingest NAV → snapshot goal progress → evaluate rebalancing (BR-25)."""
     with transaction(ctx.conn):
         nav_date = ingest_next_day(ctx)
-    log.info("nav_refresh_completed", extra={"nav_date": nav_date})
-    return {"nav_date": nav_date}
+        snapshots = goal_progress_service.snapshot_all(ctx, nav_date)
+        evaluation = rebalancing_service.evaluate_all(ctx)
+    log.info("nav_refresh_completed", extra={"nav_date": nav_date, "snapshots": snapshots,
+                                             "rebalancing_created": evaluation["created"]})
+    return {"nav_date": nav_date, "goal_snapshots": snapshots,
+            **{f"rebalancing_{key}": count for key, count in evaluation.items()}}
 
 
 def run_refresh_cycle_standalone(settings: Settings, clock: Clock) -> dict[str, Any]:
