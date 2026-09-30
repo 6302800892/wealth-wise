@@ -1,0 +1,88 @@
+[project]
+name = "wealthwise"
+version = "1.0.0"
+description = "WealthWise robo-advisory and portfolio recommendation platform (BC-AINE-008)"
+requires-python = ">=3.12,<4.0"
+dependencies = [
+    "fastapi (>=0.115,<1.0)",
+    "uvicorn (>=0.30,<1.0)",
+]
+
+[project.scripts]
+wealthwise = "src.main:run"
+
+[tool.poetry]
+packages = [{ include = "src" }]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3"
+pytest-cov = "^6.0"
+httpx = "^0.28"
+import-linter = "^2.1"
+pytest-playwright = "^0.7"
+
+[tool.poetry.group.agents]
+optional = true
+
+[tool.poetry.group.agents.dependencies]
+claude-agent-sdk = "*"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--strict-markers -p no:cacheprovider"
+markers = [
+    "ac(id): links a test to an acceptance criterion in specs/app_spec.md (e.g. AC-05)",
+    "e2e: browser end-to-end test (requires running app and Playwright browsers)",
+]
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+
+[tool.importlinter]
+root_package = "src"
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Layered architecture (api > service > repository > config > domain > types)"
+type = "layers"
+layers = [
+    "src.api",
+    "src.service",
+    "src.repository",
+    "src.config",
+    "src.domain",
+    "src.types",
+]
+
+[[tool.importlinter.contracts]]
+name = "Only the repository layer talks to sqlite3"
+type = "forbidden"
+source_modules = ["src.api", "src.service", "src.config", "src.domain", "src.types"]
+forbidden_modules = ["sqlite3"]
+
+[[tool.importlinter.contracts]]
+name = "HTTP framework stays in the API layer"
+type = "forbidden"
+source_modules = ["src.service", "src.repository", "src.config", "src.domain", "src.types"]
+forbidden_modules = ["fastapi", "starlette", "uvicorn"]
+
+[[tool.importlinter.contracts]]
+name = "Controllers go through services, never repositories"
+type = "forbidden"
+source_modules = ["src.api"]
+forbidden_modules = ["src.repository"]
+
+[[tool.importlinter.contracts]]
+name = "Domain and types are pure (no logging, randomness or I/O)"
+type = "forbidden"
+source_modules = ["src.domain", "src.types"]
+forbidden_modules = ["logging", "random", "secrets", "sqlite3", "os", "fastapi"]
