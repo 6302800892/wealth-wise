@@ -12,6 +12,7 @@ APPEND_ONLY_TABLES = [
     "risk_band_overrides",
     "portfolio_recommendations",
     "portfolio_recommendation_lines",
+    "nav_prices",
 ]
 
 
