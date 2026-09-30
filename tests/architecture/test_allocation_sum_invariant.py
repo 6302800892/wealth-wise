@@ -2,13 +2,11 @@
 
 import pytest
 
-from src.repository.db import connect
-
 
 @pytest.mark.ac("AC-02")
-def test_every_published_template_row_sums_to_100(app, settings):
+def test_every_published_template_row_sums_to_100(db):
     """AC-02.1: DB invariant — each (version, band, horizon) of a published template sums to 10 000 bp."""
-    conn = connect(settings.db_path)
+    conn = db
     rows = conn.execute(
         "SELECT r.template_version, r.risk_band, r.horizon_bucket, SUM(r.target_bp) AS total, COUNT(*) AS n"
         " FROM allocation_template_rows r JOIN allocation_template_set_versions v ON v.version = r.template_version"
@@ -19,8 +17,8 @@ def test_every_published_template_row_sums_to_100(app, settings):
         assert row["total"] == 10_000, dict(row)
 
 
-def test_each_published_version_covers_all_band_horizon_pairs(app, settings):
-    conn = connect(settings.db_path)
+def test_each_published_version_covers_all_band_horizon_pairs(db):
+    conn = db
     counts = conn.execute(
         "SELECT r.template_version, COUNT(DISTINCT r.risk_band || '/' || r.horizon_bucket)"
         " FROM allocation_template_rows r JOIN allocation_template_set_versions v ON v.version = r.template_version"

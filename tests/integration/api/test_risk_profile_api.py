@@ -2,7 +2,6 @@
 
 import pytest
 
-from src.repository.db import connect
 from tests.integration.api.helpers import answers_payload
 
 
@@ -18,7 +17,7 @@ def test_questionnaire_has_six_questions_with_five_options(client, auth):
 
 
 @pytest.mark.ac("AC-01")
-def test_submission_assigns_band_and_persists_records(client, auth, settings):
+def test_submission_assigns_band_and_persists_records(client, auth, db):
     """AC-01.2: 3,3,3,3,2,2 → score 16, MODERATE, 201, one assessment + one QUESTIONNAIRE assignment."""
     headers = auth("customer.beta")
     response = client.post("/api/v1/me/risk-assessments", json=answers_payload(3, 3, 3, 3, 2, 2), headers=headers)
@@ -26,7 +25,7 @@ def test_submission_assigns_band_and_persists_records(client, auth, settings):
     body = response.json()
     assert body["total_score"] == 16
     assert body["risk_band"] == "MODERATE"
-    conn = connect(settings.db_path)
+    conn = db
     customer_id = client.get("/api/v1/auth/me", headers=headers).json()["customer_id"]
     assessments = conn.execute("SELECT COUNT(*) FROM risk_assessments WHERE customer_id = ?", (customer_id,)).fetchone()[0]
     sources = conn.execute("SELECT source FROM risk_band_assignments WHERE customer_id = ?", (customer_id,)).fetchall()
@@ -35,7 +34,7 @@ def test_submission_assigns_band_and_persists_records(client, auth, settings):
 
 
 @pytest.mark.ac("AC-01")
-def test_invalid_submission_returns_422_and_saves_nothing(client, auth, settings):
+def test_invalid_submission_returns_422_and_saves_nothing(client, auth, db):
     """AC-01.4: a missing question yields 422 INVALID_ANSWERS and nothing is persisted."""
     headers = auth("customer.beta")
     payload = answers_payload(3, 3, 3, 3, 2, 2)
@@ -44,7 +43,7 @@ def test_invalid_submission_returns_422_and_saves_nothing(client, auth, settings
     assert response.status_code == 422
     assert response.json()["error"]["code"] == "INVALID_ANSWERS"
     customer_id = client.get("/api/v1/auth/me", headers=headers).json()["customer_id"]
-    count = connect(settings.db_path).execute(
+    count = db.execute(
         "SELECT COUNT(*) FROM risk_assessments WHERE customer_id = ?", (customer_id,)).fetchone()[0]
     assert count == 0
 
