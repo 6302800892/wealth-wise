@@ -8,7 +8,7 @@ from typing import Any
 
 from src.repository import customers_repo, users_repo
 from src.repository.db import transaction
-from src.service import goal_service, recommendation_service, risk_profile_service
+from src.service import goal_service, holdings_service, nav_service, recommendation_service, risk_profile_service
 from src.service.context import ServiceContext
 from src.service.security import hash_password
 from src.types.enums import GoalPriority, GoalType, Role
@@ -59,6 +59,11 @@ def _replay_journey(ctx: ServiceContext, journey: dict[str, Any]) -> dict[str, s
         goal_ids[goal["key"]] = created["goal_id"]
     if journey.get("recommend"):
         recommendation_service.generate(ctx, user.customer_id)
+    for holding in journey.get("holdings", []):
+        holdings_service.record_holding(
+            ctx, user.customer_id, asset_class_code=holding["asset_class_code"],
+            goal_id=goal_ids[holding["goal"]], units=holding["units"],
+        )
     return goal_ids
 
 
@@ -69,6 +74,7 @@ def seed_if_empty(ctx: ServiceContext) -> bool:
     data = _load(ctx.settings.seed_dir)
     with transaction(ctx.conn):
         _seed_people(ctx, data)
+        nav_service.ingest_next_day(ctx)
         goal_ids: dict[str, str] = {}
         for journey in data.get("journeys", []):
             goal_ids.update(_replay_journey(ctx, journey))

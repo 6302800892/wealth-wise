@@ -84,7 +84,39 @@
           "priority": "LOW"
         }
       ],
-      "recommend": true
+      "recommend": true,
+      "holdings": [
+        {
+          "goal": "alpha_home",
+          "asset_class_code": "EQUITY",
+          "units": "2000.0000"
+        },
+        {
+          "goal": "alpha_home",
+          "asset_class_code": "DEBT",
+          "units": "8000.0000"
+        },
+        {
+          "goal": "alpha_retirement",
+          "asset_class_code": "EQUITY",
+          "units": "2000.0000"
+        },
+        {
+          "goal": "alpha_retirement",
+          "asset_class_code": "DEBT",
+          "units": "2000.0000"
+        },
+        {
+          "goal": "alpha_retirement",
+          "asset_class_code": "GOLD",
+          "units": "2000.0000"
+        },
+        {
+          "goal": "alpha_retirement",
+          "asset_class_code": "CASH",
+          "units": "50000.0000"
+        }
+      ]
     }
   ]
 }
