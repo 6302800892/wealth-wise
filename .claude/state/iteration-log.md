@@ -59,3 +59,13 @@
 - **Checks:** 7 API, 0 Playwright, 0 design passed
 - **Coverage:** 93% (baseline: 91%)
 - **Learned Rules Applied:** [KD-03, KD-04]
+
+## Group E — Sprint 4 Advisor + admin
+- **Date:** 2026-09-30
+- **Status:** PASS
+- **Stories:** [E6-S1, E6-S2, E6-S3, E7-S1, E7-S2, E7-S3]
+- **Mode:** solo
+- **Summary:** Audited overrides, manual recommendations, rule-set/template drafts with validated publish, in-flight version rule proven end-to-end.
+- **Checks:** 9 API, 0 Playwright, 0 design passed
+- **Coverage:** 94% (baseline: 93%)
+- **Learned Rules Applied:** [KD-01, KD-05]

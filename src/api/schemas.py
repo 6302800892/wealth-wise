@@ -4,7 +4,7 @@ from datetime import date
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.types.enums import GoalPriority, GoalType, OverrideReason, RiskBand
+from src.types.enums import GoalPriority, GoalType, HorizonBucket, RiskBand
 
 
 class StrictModel(BaseModel):
@@ -54,9 +54,54 @@ class DismissRequest(StrictModel):
 
 class OverrideRequest(StrictModel):
     new_band: RiskBand
-    reason_code: OverrideReason
+    reason_code: str = Field(max_length=64)
     note: str = Field(max_length=2000)
 
 
 class ManualRecommendationRequest(StrictModel):
     note: str = Field(max_length=2000)
+
+
+class OptionIn(StrictModel):
+    id: str = Field(min_length=1, max_length=32)
+    text: str = Field(min_length=1, max_length=200)
+    score: int = Field(ge=0, le=100)
+
+
+class QuestionIn(StrictModel):
+    id: str = Field(min_length=1, max_length=32)
+    text: str = Field(min_length=1, max_length=300)
+    options: list[OptionIn] = Field(min_length=1, max_length=10)
+
+
+class BandIn(StrictModel):
+    band: RiskBand
+    min_score: int
+    max_score: int
+
+
+class RuleSetDefinition(StrictModel):
+    questions: list[QuestionIn] = Field(min_length=1, max_length=30)
+    bands: list[BandIn] = Field(min_length=1, max_length=3)
+
+
+class TemplateRowIn(StrictModel):
+    risk_band: RiskBand
+    horizon_bucket: HorizonBucket
+    allocations: dict[str, str]
+
+
+class TemplateDraftRequest(StrictModel):
+    rows: list[TemplateRowIn] = Field(max_length=9)
+
+
+class AssetClassCreateRequest(StrictModel):
+    code: str = Field(max_length=20)
+    name: str = Field(max_length=100)
+    display_order: int
+
+
+class AssetClassUpdateRequest(StrictModel):
+    name: str | None = Field(default=None, max_length=100)
+    display_order: int | None = None
+    is_active: bool | None = None

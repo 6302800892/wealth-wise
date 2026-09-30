@@ -18,6 +18,7 @@ APPEND_ONLY_TABLES = [
     "rebalancing_lines",
     "rebalancing_decisions",
     "stub_orders",
+    "manual_recommendations",
 ]
 
 
