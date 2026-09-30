@@ -7,6 +7,11 @@ from src.repository.db import connect
 APPEND_ONLY_TABLES = [
     "audit_log",
     "schema_migrations",
+    "risk_assessments",
+    "risk_band_assignments",
+    "risk_band_overrides",
+    "portfolio_recommendations",
+    "portfolio_recommendation_lines",
 ]
 
 
