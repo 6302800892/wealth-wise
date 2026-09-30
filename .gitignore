@@ -1,0 +1,23 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.coverage
+.pytest_cache/
+
+# Runtime data (SQLite DB, NAV feed cursor)
+data/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Playwright
+test-results/
+playwright-report/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
