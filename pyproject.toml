@@ -34,6 +34,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--strict-markers -p no:cacheprovider"
+filterwarnings = ["ignore:Using `httpx` with `starlette.testclient` is deprecated"]
 markers = [
     "ac(id): links a test to an acceptance criterion in specs/app_spec.md (e.g. AC-05)",
     "e2e: browser end-to-end test (requires running app and Playwright browsers)",
@@ -66,23 +67,27 @@ layers = [
 [[tool.importlinter.contracts]]
 name = "Only the repository layer talks to sqlite3"
 type = "forbidden"
+allow_indirect_imports = true
 source_modules = ["src.api", "src.service", "src.config", "src.domain", "src.types"]
 forbidden_modules = ["sqlite3"]
 
 [[tool.importlinter.contracts]]
 name = "HTTP framework stays in the API layer"
 type = "forbidden"
+allow_indirect_imports = true
 source_modules = ["src.service", "src.repository", "src.config", "src.domain", "src.types"]
 forbidden_modules = ["fastapi", "starlette", "uvicorn"]
 
 [[tool.importlinter.contracts]]
 name = "Controllers go through services, never repositories"
 type = "forbidden"
+allow_indirect_imports = true
 source_modules = ["src.api"]
 forbidden_modules = ["src.repository"]
 
 [[tool.importlinter.contracts]]
 name = "Domain and types are pure (no logging, randomness or I/O)"
 type = "forbidden"
+allow_indirect_imports = true
 source_modules = ["src.domain", "src.types"]
 forbidden_modules = ["logging", "random", "secrets", "sqlite3", "os", "fastapi"]

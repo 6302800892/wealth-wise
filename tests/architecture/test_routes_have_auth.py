@@ -1,44 +1,48 @@
-"""NFR-04: every route except the public allow-list declares an auth/role dependency."""
+"""NFR-04: every operation except the public allow-list sits behind the auth boundary,
+and role-scoped prefixes reject every other role. Verified behaviourally against the OpenAPI surface."""
 
-from fastapi.routing import APIRoute
+import re
 
-PUBLIC_ROUTES = {("GET", "/health"), ("POST", "/api/v1/auth/login")}
-
-
-def _dependency_calls(dependant):
-    for dependency in dependant.dependencies:
-        yield dependency.call
-        yield from _dependency_calls(dependency)
+PUBLIC_OPERATIONS = {("GET", "/health"), ("POST", "/api/v1/auth/login")}
+ROLE_PREFIXES = {"/api/v1/me": "customer.alpha", "/api/v1/advisor": "advisor.one", "/api/v1/admin": "admin.one"}
+ALL_USERS = set(ROLE_PREFIXES.values())
 
 
-def _is_guard(call) -> bool:
-    return getattr(call, "__wealthwise_auth__", None) is not None
+def _operations(client):
+    schema = client.get("/openapi.json").json()
+    for path, operations in schema["paths"].items():
+        for method in operations:
+            yield method.upper(), path
 
 
-def _api_routes(app):
-    return [route for route in app.routes if isinstance(route, APIRoute)]
+def _concrete(path: str) -> str:
+    return re.sub(r"\{[^}]+\}", "1", path)
 
 
-def test_all_non_public_routes_are_guarded(app):
+def test_public_operations_exist(client):
+    assert PUBLIC_OPERATIONS <= set(_operations(client))
+
+
+def test_all_non_public_operations_require_authentication(client):
     unguarded = []
-    for route in _api_routes(app):
-        for method in route.methods:
-            if (method, route.path) in PUBLIC_ROUTES:
-                continue
-            if not any(_is_guard(call) for call in _dependency_calls(route.dependant)):
-                unguarded.append(f"{method} {route.path}")
+    for method, path in _operations(client):
+        if (method, path) in PUBLIC_OPERATIONS:
+            continue
+        response = client.request(method, _concrete(path), json={})
+        if response.status_code != 401:
+            unguarded.append(f"{method} {path} -> {response.status_code}")
     assert unguarded == []
 
 
-def test_role_scoped_prefixes_use_matching_role(app):
-    expected = {"/api/v1/me": "CUSTOMER", "/api/v1/advisor": "ADVISOR", "/api/v1/admin": "ADMIN"}
-    for route in _api_routes(app):
-        for prefix, role in expected.items():
-            if route.path.startswith(prefix):
-                roles = {getattr(c, "__wealthwise_auth__", None) for c in _dependency_calls(route.dependant)}
-                assert role in roles, f"{route.path} must require {role}"
-
-
-def test_public_routes_exist(app):
-    paths = {(m, r.path) for r in _api_routes(app) for m in r.methods}
-    assert PUBLIC_ROUTES <= paths
+def test_role_scoped_operations_reject_other_roles(client, auth):
+    headers = {user: auth(user) for user in ALL_USERS}
+    leaks = []
+    for method, path in _operations(client):
+        owner = next((user for prefix, user in ROLE_PREFIXES.items() if path.startswith(prefix)), None)
+        if owner is None:
+            continue
+        for intruder in ALL_USERS - {owner}:
+            response = client.request(method, _concrete(path), json={}, headers=headers[intruder])
+            if response.status_code != 403:
+                leaks.append(f"{intruder}: {method} {path} -> {response.status_code}")
+    assert leaks == []
