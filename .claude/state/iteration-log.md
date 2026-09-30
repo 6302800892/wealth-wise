@@ -19,3 +19,13 @@
 - Phase 3 (Integrators): [{teammate IDs}] (shared files: [{paths}])
 
 -->
+
+## Group A — Sprint 0 Foundation
+- **Date:** 2026-09-30
+- **Status:** PASS
+- **Stories:** [E0-S1, E0-S2, E0-S3, E0-S4]
+- **Mode:** solo
+- **Summary:** Config, migrations runner, auth boundary, JSON logging and health built test-first; two harness findings fixed (import-linter indirect imports, FastAPI router nesting).
+- **Checks:** 5 API, 0 Playwright, 0 design passed
+- **Coverage:** 82% (baseline: 0%)
+- **Learned Rules Applied:** []

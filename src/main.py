@@ -54,10 +54,10 @@ def _build_frontend(settings: Settings) -> None:
     if (Path(settings.frontend_dist) / "index.html").is_file():
         return
     npm = shutil.which("npm")
-    if npm is None:
-        log.warning("frontend_not_built", extra={"reason": "npm not found; serving API only"})
-        return
     frontend = str(PROJECT_ROOT / "frontend")
+    if npm is None or not (PROJECT_ROOT / "frontend" / "package.json").is_file():
+        log.warning("frontend_not_built", extra={"reason": "npm or frontend/ missing; serving API only"})
+        return
     subprocess.run([npm, "--prefix", frontend, "ci"], check=True)
     subprocess.run([npm, "--prefix", frontend, "run", "build"], check=True)
 

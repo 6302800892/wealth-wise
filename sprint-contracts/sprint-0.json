@@ -1,0 +1,31 @@
+{
+  "group": "A",
+  "sprint": "0 — Foundation",
+  "stories": ["E0-S1", "E0-S2", "E0-S3", "E0-S4"],
+  "requirements": ["NFR-02", "NFR-03", "NFR-04", "NFR-05", "NFR-06", "NFR-07", "NFR-08"],
+  "contract": {
+    "api_checks": [
+      {"id": "api-001", "method": "GET", "path": "/health", "expected_status": 200,
+       "expected_body": {"status": "ok", "db": "ok"}, "max_response_time_ms": 1000,
+       "description": "NFR-07 health returns 200 within 1 s"},
+      {"id": "api-002", "method": "POST", "path": "/api/v1/auth/login",
+       "body": {"username": "customer.alpha", "password": "WealthWise@2026"}, "expected_status": 200,
+       "expected_body": {"role": "CUSTOMER"}, "description": "NFR-04 seeded customer can log in"},
+      {"id": "api-003", "method": "POST", "path": "/api/v1/auth/login",
+       "body": {"username": "customer.alpha", "password": "wrong"}, "expected_status": 401,
+       "expected_body": {"error": {"code": "UNAUTHENTICATED"}}, "description": "NFR-04 wrong password rejected"},
+      {"id": "api-004", "method": "GET", "path": "/api/v1/auth/me", "expected_status": 401,
+       "description": "NFR-04 protected route requires a token"},
+      {"id": "api-005", "method": "GET", "path": "/api/v1/auth/me", "auth": "advisor.one", "expected_status": 200,
+       "expected_body": {"role": "ADVISOR"}, "description": "NFR-04 token identifies the advisor role"}
+    ],
+    "playwright_checks": [],
+    "performance_checks": [{"endpoint": "/health", "max_response_time_ms": 1000, "method": "GET"}],
+    "architecture_checks": {
+      "layering": {"required": true, "description": "import-linter contracts kept (tests/architecture/test_layering.py)"},
+      "no_float": {"required": true, "description": "No float in types/domain/repository/service"},
+      "append_only": {"required": true, "description": "audit_log and schema_migrations reject UPDATE/DELETE"},
+      "migrations": {"required": true, "description": "Checksum-verified append-only migrations"}
+    }
+  }
+}
