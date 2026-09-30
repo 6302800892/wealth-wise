@@ -22,7 +22,6 @@ def settings(tmp_path) -> Settings:
         demo_password=TEST_PASSWORD,
         password_hash_iterations=1_000,
         nav_refresh_interval_seconds=0,
-        nav_state_path=str(tmp_path / "nav-state.json"),
     )
 
 

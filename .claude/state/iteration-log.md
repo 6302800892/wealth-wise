@@ -79,3 +79,13 @@
 - **Checks:** 2 API, 6 Playwright, 4 design passed
 - **Coverage:** 94% (baseline: 94%)
 - **Learned Rules Applied:** [KD-06]
+
+## Group G — Sprint 6 Substrate + CI + docs
+- **Date:** 2026-09-30
+- **Status:** PASS
+- **Stories:** [E9-S1, E9-S2, E9-S3, E9-S4, E9-S5]
+- **Mode:** solo
+- **Summary:** 5 agents, 5 skills, 3 commands, 4 hooks (tested), Agent SDK script, plugin/MCP, GitLab CI with Claude review, layered CLAUDE.md, docs; Windows hook stdin bug fixed.
+- **Checks:** 1 API (+42 regression), 25 Playwright, substrate 8/8
+- **Coverage:** 94% (baseline: 94%)
+- **Learned Rules Applied:** [KD-07, KD-08, KD-09, KD-10, KD-11]

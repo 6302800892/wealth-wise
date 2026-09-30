@@ -5,8 +5,8 @@
 | Spec ID | SPEC-APP-001 |
 | Business case | BC-AINE-008 — Robo-Advisory & Portfolio Recommendation Platform |
 | Domain | BFS — Wealth Management |
-| Spec version | 1.0.0 |
-| Status | Draft — awaiting human approval |
+| Spec version | 1.1.0 |
+| Status | Approved. Implemented in sprints 0–5 (see `specs/reviews/`) |
 | Last updated | 2026-09-30 |
 
 > **Spec-is-truth.** When this spec and the code disagree, the spec wins. Change the spec on purpose (bump the version, add a changelog entry), then regenerate the code. AC, NFR and BR identifiers are stable. Never renumber or reuse them.
@@ -389,6 +389,7 @@ It atomically writes a `risk_band_overrides` row (previous band, new band, reaso
 ### 8.10 Versioning and immutability
 **BR-21.** Rule sets and template sets each have integer versions: 1, 2, 3 and so on.
 - At most one `DRAFT` of each type can exist at a time. It is created by cloning the active version.
+- A template draft also contains every **active** asset class that the active version lacks, at `0.00`, so the draft can always be edited into a publishable state (FL-001).
 - The **active** version is the highest `PUBLISHED` version.
 
 **BR-22. Publish validation.**
@@ -620,7 +621,7 @@ The local-dev password for demo users is documented in `README.md` only. It is a
 | Unit — services | `tests/unit/service/` | pytest | Orchestration, transactions, audit writes |
 | Integration — API | `tests/integration/api/` | pytest + TestClient + temp SQLite | Every endpoint, including the role matrix (401/403/404) |
 | Architecture | `tests/architecture/` | pytest + import-linter | ≥ 3 required, 8 specified (§6.3) |
-| E2E / UI | `tests/e2e/` | Playwright (Python) | ≥ 1 journey per role, at both viewports |
+| E2E / UI | `tests/e2e/` (marker `e2e`, opt-in: `pytest tests/e2e -m e2e`) | Playwright (Python) | ≥ 1 journey per role, at both viewports |
 | Frontend unit | `frontend/tests/unit/` | Vitest | API client, formatters, route parsing |
 
 - **At least 20 unit tests** in total (target ≥ 60).
@@ -760,6 +761,7 @@ The capstone brief left these points open. The decisions below are made here and
 | Version | Date | Change |
 |---|---|---|
 | 1.0.0 | 2026-09-30 | Initial root spec, from BC-AINE-008 |
+| 1.1.0 | 2026-09-30 | BR-21: template drafts include new active asset classes at 0.00 (FL-001). E2E suite is opt-in via the `e2e` marker. Harness hooks read stdin from fd 0 so they run on Windows (PM-001). |
 
 
 

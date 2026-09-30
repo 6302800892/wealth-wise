@@ -1,0 +1,122 @@
+# WealthWise CI — build, test, E2E and Claude Code review on merge requests (spec §16).
+# main must stay green; changes arrive only through merge requests merged with --no-ff.
+
+stages: [verify, test, e2e, review]
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  POETRY_VIRTUALENVS_IN_PROJECT: "true"
+  PYTHONUTF8: "1"
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+.python:
+  image: python:3.12-slim
+  cache:
+    key: poetry-$CI_COMMIT_REF_SLUG
+    paths: [.cache/pip, .venv]
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq git nodejs > /dev/null
+    - pip install -q poetry
+    - poetry install --no-interaction
+
+# ---- verify ----------------------------------------------------------------------------------
+architecture:
+  extends: .python
+  stage: verify
+  script:
+    - poetry run lint-imports
+    - poetry run python scripts/ac_trace_report.py
+  artifacts:
+    paths: [specs/reviews/ac-traceability.md]
+
+migrations-append-only:
+  extends: .python
+  stage: verify
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - git fetch --quiet origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+    - poetry run python scripts/check_migrations_append_only.py "origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+
+# ---- test ------------------------------------------------------------------------------------
+backend-tests:
+  extends: .python
+  stage: test
+  script:
+    - poetry run pytest --cov=src --cov-report=xml --cov-report=term --cov-fail-under=80 --junitxml=report.xml
+  coverage: '/^TOTAL.+?(\d+)%$/'
+  artifacts:
+    when: always
+    paths: [coverage.xml, report.xml]
+    reports:
+      junit: report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+
+frontend-tests:
+  stage: test
+  image: node:22-slim
+  cache:
+    key: npm-$CI_COMMIT_REF_SLUG
+    paths: [frontend/node_modules]
+  script:
+    - npm --prefix frontend ci
+    - npm --prefix frontend test -- --run
+    - npm --prefix frontend run build
+  artifacts:
+    paths: [frontend/dist]
+    expire_in: 1 day
+
+# ---- e2e -------------------------------------------------------------------------------------
+playwright-e2e:
+  stage: e2e
+  image: mcr.microsoft.com/playwright/python:v1.63.0-noble
+  needs: [frontend-tests]
+  before_script:
+    - pip install -q poetry
+    - poetry install --no-interaction
+  script:
+    - poetry run pytest tests/e2e -m e2e --junitxml=e2e-report.xml
+  artifacts:
+    when: always
+    paths: [e2e-report.xml, tests/e2e/snapshots/screenshots]
+    reports:
+      junit: e2e-report.xml
+
+# ---- review: Claude Code in CI -----------------------------------------------------------------
+claude-review:
+  stage: review
+  image: node:22-slim
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $ANTHROPIC_API_KEY
+  allow_failure: true
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq git curl > /dev/null
+    - npm install -g @anthropic-ai/claude-code
+    - git fetch --quiet origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+  script:
+    - git diff "origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME...HEAD" > mr.diff
+    - >
+      claude -p "You are the WealthWise merge-request reviewer. Read CLAUDE.md, specs/app_spec.md and mr.diff.
+      Review ONLY the diff for: spec violations (spec is truth), float arithmetic on money (NFR-01), UPDATE/DELETE on
+      append-only tables or edits to existing migrations (NFR-02, NFR-05), PII in logs (NFR-03), missing role guards
+      (NFR-04), layering violations, and acceptance criteria without AC-tagged tests. Output Markdown: a verdict line
+      (APPROVE or REQUEST_CHANGES), then numbered findings with file:line and a concrete fix."
+      --allowedTools "Read,Grep,Glob" --output-format text > claude-review.md
+    - cat claude-review.md
+    - |
+      if [ -n "$GITLAB_REVIEW_TOKEN" ]; then
+        body=$(python3 -c 'import json,sys; print(json.dumps({"body": open("claude-review.md").read()}))' 2>/dev/null \
+          || node -e 'console.log(JSON.stringify({body: require("fs").readFileSync("claude-review.md","utf8")}))')
+        curl --silent --fail --request POST --header "PRIVATE-TOKEN: $GITLAB_REVIEW_TOKEN" \
+          --header "Content-Type: application/json" --data "$body" \
+          "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes"
+      fi
+  artifacts:
+    when: always
+    paths: [claude-review.md]

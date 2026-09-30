@@ -42,7 +42,7 @@ function simulateEdit(filePath, oldStr, newStr, replaceAll) {
 }
 
 try {
-  const input = JSON.parse(fs.readFileSync('/dev/stdin', 'utf8'));
+  const input = JSON.parse(fs.readFileSync(0, 'utf8'));
   const toolName = input.tool_name || '';
   const ti = input.tool_input || {};
   const filePath = ti.file_path || '';

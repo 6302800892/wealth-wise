@@ -1,1 +1,45 @@
-[]
+[
+  {
+    "sprint": 0,
+    "coverage": 82,
+    "api": "5/5"
+  },
+  {
+    "sprint": 1,
+    "coverage": 90,
+    "api": "11/11"
+  },
+  {
+    "sprint": 2,
+    "coverage": 91,
+    "api": "8/8"
+  },
+  {
+    "sprint": 3,
+    "coverage": 93,
+    "api": "7/7"
+  },
+  {
+    "sprint": 4,
+    "coverage": 94,
+    "api": "9/9"
+  },
+  {
+    "sprint": 5,
+    "coverage": 94,
+    "api": "2/2",
+    "e2e": "25 passed",
+    "design": {
+      "visual_hierarchy": 8,
+      "accessibility": 7,
+      "responsiveness": 8,
+      "interaction_feedback": 7
+    }
+  },
+  {
+    "sprint": 6,
+    "coverage": 94,
+    "api": "1/1",
+    "substrate": "8/8"
+  }
+]

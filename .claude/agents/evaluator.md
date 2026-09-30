@@ -16,6 +16,15 @@ tools:
   - mcp__plugin_playwright_playwright__browser_wait_for
   - mcp__plugin_playwright_playwright__browser_tabs
   - mcp__plugin_playwright_playwright__browser_close
+  - mcp__playwright__browser_navigate
+  - mcp__playwright__browser_click
+  - mcp__playwright__browser_fill_form
+  - mcp__playwright__browser_snapshot
+  - mcp__playwright__browser_take_screenshot
+  - mcp__playwright__browser_press_key
+  - mcp__playwright__browser_wait_for
+  - mcp__playwright__browser_resize
+  - mcp__playwright__browser_close
 ---
 
 # Evaluator Agent
@@ -120,3 +129,9 @@ Do NOT modify: `id`, `title`, `layer`, `group`, `estimate`.
 **Scope of evaluation:** Only evaluate stories that are in the current sprint. Do not re-evaluate previously passing stories unless the generator's changes touch those files.
 
 **Regression:** If a previously passing story now fails, report it as a regression failure alongside the current sprint failures. Update `features.json` accordingly.
+
+
+## WealthWise project notes
+- The project-scoped Playwright MCP server is declared in `.mcp.json` as `playwright`. Its tools are `mcp__playwright__*`. Start the app with `poetry run wealthwise` (http://127.0.0.1:8000), then drive each `playwright_checks` entry of the sprint contract at 1280×800, then `browser_resize` to 375×812.
+- Deterministic regression coverage for the same journeys lives in `tests/e2e/` (pytest-playwright, ARIA baselines in `tests/e2e/snapshots/`). Run it with `pytest tests/e2e -m e2e`.
+- Verdicts and evidence go to `specs/reviews/sprint-<n>-evaluation.md`. Use `/sprint-evaluate <n>`.
