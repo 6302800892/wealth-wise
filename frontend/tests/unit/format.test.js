@@ -1,6 +1,6 @@
 // NFR-01 on the client: amounts arrive as decimal strings and are formatted without floating point.
 import { describe, expect, it } from "vitest";
-import { bpToPct, formatInr, formatPct, pctToBp, sumPct } from "../../src/lib/format.js";
+import { bpToPct, capPct, formatInr, formatPct, pctToBp, sumPct } from "../../src/lib/format.js";
 
 describe("formatInr", () => {
   it("uses Indian digit grouping", () => {
@@ -40,5 +40,14 @@ describe("fixed-point percentage helpers (AC-02 live row sums)", () => {
   it("formats percentages for display", () => {
     expect(formatPct("10.00")).toBe("10.00%");
     expect(formatPct(null)).toBe("—");
+  });
+});
+
+describe("capPct", () => {
+  it("clamps progress widths without floating point", () => {
+    expect(capPct("25.30")).toBe("25.30");
+    expect(capPct("150.00")).toBe("100.00");
+    expect(capPct("-1.00")).toBe("0.00");
+    expect(capPct(null)).toBe("0.00");
   });
 });
