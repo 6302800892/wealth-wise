@@ -49,3 +49,13 @@
 - **Checks:** 8 API, 0 Playwright, 0 design passed
 - **Coverage:** 91% (baseline: 90%)
 - **Learned Rules Applied:** [KD-03]
+
+## Group D — Sprint 3 Rebalancing + goal tracker
+- **Date:** 2026-09-30
+- **Status:** PASS
+- **Stories:** [E4-S1, E4-S2, E4-S3, E5-S1, E5-S2]
+- **Mode:** solo
+- **Summary:** Drift-triggered proposals with supersede, accept/dismiss audit, stub orders, goal snapshots per NAV date.
+- **Checks:** 7 API, 0 Playwright, 0 design passed
+- **Coverage:** 93% (baseline: 91%)
+- **Learned Rules Applied:** [KD-03, KD-04]
