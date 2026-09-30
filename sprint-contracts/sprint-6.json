@@ -1,0 +1,28 @@
+{
+  "group": "G",
+  "sprint": "6 — AI-native substrate, CI/CD and documentation",
+  "stories": ["E9-S1", "E9-S2", "E9-S3", "E9-S4", "E9-S5"],
+  "requirements": ["NFR-03", "NFR-05", "NFR-08"],
+  "contract": {
+    "api_checks": [
+      {"id": "api-601", "method": "GET", "path": "/health", "expected_status": 200, "max_response_time_ms": 1000,
+       "description": "Regression: health after substrate changes"}
+    ],
+    "playwright_checks": [],
+    "substrate_checks": {
+      "agents": {"required": 2, "delivered": ["risk-profiler-agent", "rebalancing-agent", "policy-version-validator-agent", "archtest-author-agent", "doc-writer"]},
+      "skills": {"required": 3, "delivered": ["risk-band-scorer", "drift-calculator", "rebalancing-quantity-proposer", "policy-version-validator", "spec-to-test-generator"]},
+      "commands": {"required": 2, "delivered": ["ac-trace", "sprint-evaluate", "new-template-version"]},
+      "hooks": {"required": 2, "delivered": ["allocation-sum-invariant-check", "migration-append-only-check", "pii-log-check", "no-float-money-check"],
+                "verified_by": "tests/architecture/test_substrate_hooks.py"},
+      "agent_sdk": {"required": true, "delivered": "scripts/ac_trace_agent.py"},
+      "plugin": {"required": true, "delivered": "plugin.json"},
+      "mcp": {"required": true, "delivered": ".mcp.json (playwright)"},
+      "ci": {"required": true, "delivered": ".gitlab-ci.yml (verify, test, e2e, claude-review)"}
+    },
+    "architecture_checks": {
+      "layering": {"required": true, "description": "import-linter 5 contracts kept"},
+      "traceability": {"required": true, "description": "scripts/ac_trace_report.py — 10/10 ACs, 48/48 scenarios"}
+    }
+  }
+}

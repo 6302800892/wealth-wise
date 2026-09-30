@@ -1,0 +1,36 @@
+{
+  "name": "WealthWise — robo-advisory and portfolio recommendation (BC-AINE-008)",
+  "linter": "none",
+  "typechecker": "none",
+  "stack": {
+    "backend": {"language": "python", "version": "3.12+", "framework": "fastapi", "package_manager": "poetry",
+                "linter": "none", "typechecker": "none", "test_runner": "pytest"},
+    "frontend": {"language": "javascript", "framework": "react", "bundler": "vite", "package_manager": "npm",
+                 "linter": "none", "typechecker": "none", "test_runner": "vitest"},
+    "database": {"primary": "sqlite", "secondary": null},
+    "deployment": {"method": "local", "services": ["wealthwise"]}
+  },
+  "evaluation": {
+    "api_base_url": "http://127.0.0.1:8000/api/v1",
+    "ui_base_url": "http://127.0.0.1:8000",
+    "health_check": "http://127.0.0.1:8000/health",
+    "design_score_threshold": 7,
+    "design_max_iterations": 10,
+    "test_corpus_dir": "tests"
+  },
+  "execution": {
+    "default_mode": "full",
+    "max_self_heal_attempts": 3,
+    "max_auto_iterations": 50,
+    "coverage_threshold": 80,
+    "session_chaining": true,
+    "agent_team_size": "auto",
+    "teammate_model": "sonnet"
+  },
+  "verification": {
+    "mode": "local",
+    "health_check": {"url": "http://127.0.0.1:8000/health", "retries": 5, "backoff_seconds": 2},
+    "local": {"backend_url": "http://127.0.0.1:8000", "frontend_url": "http://127.0.0.1:8000",
+              "start_commands": ["poetry run wealthwise"]}
+  }
+}

@@ -49,6 +49,11 @@
             "type": "command",
             "command": "node .claude/hooks/enforce-length-pre.js",
             "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/migration-append-only-check.js",
+            "timeout": 5000
           }
         ]
       }
@@ -57,6 +62,21 @@
       {
         "matcher": "Edit|Write",
         "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/pii-log-check.js",
+            "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/no-float-money-check.js",
+            "timeout": 5000
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/allocation-sum-invariant-check.js",
+            "timeout": 5000
+          },
           {
             "type": "command",
             "command": "node .claude/hooks/scope-directory.js",
@@ -153,5 +173,8 @@
         ]
       }
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "playwright"
+  ]
 }

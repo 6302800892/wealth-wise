@@ -1,0 +1,30 @@
+{
+  "name": "wealthwise-substrate",
+  "version": "1.0.0",
+  "description": "WealthWise robo-advisory engineering substrate: domain and technical agents, skills, commands, guardrail hooks and Playwright MCP for rule-based wealth-advisory platforms. Builds on the Claude Harness Engine plugin.",
+  "author": { "name": "WealthWise AI-Native Engineering (BC-AINE-008)" },
+  "license": "UNLICENSED",
+  "keywords": ["wealth-management", "robo-advisory", "fixed-point", "claude-harness-engine", "guardrails"],
+  "dependencies": ["claude-harness-engine"],
+  "agents": [
+    "./.claude/agents/risk-profiler-agent.md",
+    "./.claude/agents/rebalancing-agent.md",
+    "./.claude/agents/policy-version-validator-agent.md",
+    "./.claude/agents/archtest-author-agent.md",
+    "./.claude/agents/doc-writer.md"
+  ],
+  "skills": [
+    "./.claude/skills/risk-band-scorer",
+    "./.claude/skills/drift-calculator",
+    "./.claude/skills/rebalancing-quantity-proposer",
+    "./.claude/skills/policy-version-validator",
+    "./.claude/skills/spec-to-test-generator"
+  ],
+  "commands": [
+    "./.claude/commands/ac-trace.md",
+    "./.claude/commands/sprint-evaluate.md",
+    "./.claude/commands/new-template-version.md"
+  ],
+  "hooks": "./.claude/hooks/wealthwise-hooks.json",
+  "mcpServers": "./.mcp.json"
+}

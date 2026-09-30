@@ -22,7 +22,6 @@ class Settings:
     seed_dir: str = _path("seed")
     frontend_dist: str = _path("frontend/dist")
     nav_feed_path: str = _path("seed/nav_feed.csv")
-    nav_state_path: str = _path("data/nav-state.json")
     drift_threshold_pct: Decimal = Decimal("5.00")
     nav_refresh_interval_seconds: int = 0
     session_ttl_minutes: int = 60
