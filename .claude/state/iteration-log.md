@@ -39,3 +39,13 @@
 - **Checks:** 11 API, 0 Playwright, 0 design passed
 - **Coverage:** 90% (baseline: 82%)
 - **Learned Rules Applied:** [KD-01, KD-02]
+
+## Group C — Sprint 2 Holdings + drift
+- **Date:** 2026-09-30
+- **Status:** PASS
+- **Stories:** [E3-S1, E3-S2, E3-S3]
+- **Mode:** solo
+- **Summary:** Goal-tagged holdings, stub NAV feed and Decimal drift calculation; targets read from the recommendation snapshot.
+- **Checks:** 8 API, 0 Playwright, 0 design passed
+- **Coverage:** 91% (baseline: 90%)
+- **Learned Rules Applied:** [KD-03]
