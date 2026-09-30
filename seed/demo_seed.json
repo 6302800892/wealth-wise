@@ -116,7 +116,8 @@
           "asset_class_code": "CASH",
           "units": "50000.0000"
         }
-      ]
+      ],
+      "evaluate_rebalancing": true
     }
   ]
 }

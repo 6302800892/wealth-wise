@@ -8,7 +8,14 @@ from typing import Any
 
 from src.repository import customers_repo, users_repo
 from src.repository.db import transaction
-from src.service import goal_service, holdings_service, nav_service, recommendation_service, risk_profile_service
+from src.service import (
+    goal_service,
+    holdings_service,
+    nav_service,
+    rebalancing_service,
+    recommendation_service,
+    risk_profile_service,
+)
 from src.service.context import ServiceContext
 from src.service.security import hash_password
 from src.types.enums import GoalPriority, GoalType, Role
@@ -64,6 +71,8 @@ def _replay_journey(ctx: ServiceContext, journey: dict[str, Any]) -> dict[str, s
             ctx, user.customer_id, asset_class_code=holding["asset_class_code"],
             goal_id=goal_ids[holding["goal"]], units=holding["units"],
         )
+    if journey.get("evaluate_rebalancing"):
+        rebalancing_service.evaluate(ctx, user.customer_id)
     return goal_ids
 
 
